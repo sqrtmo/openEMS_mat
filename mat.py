@@ -31,7 +31,7 @@ class Material:
     # --- Library Management (JSON) ---
 
     @classmethod
-    def from_library(cls, name, library_path="materials.json"):
+    def from_library(cls, name, library_path="openEMS_mat/materials.json"):
         """Loads a material from a JSON file by its name."""
 
         if not os.path.exists(library_path):
@@ -148,9 +148,23 @@ class Material:
         # If f0 is provided, calculate the effective conductivity (sigma + AC loss)
         # If not, fall back to the DC sigma
 
+		# 1. THE "NARROWBAND SIBC" METAL BYPASS
         if self.sigma > 1e6:
-            # AddMetal does not require epsilon or sigma to be set
-            mat = CSX.AddMetal(self.name)
+            if f0:
+                # If a center frequency is provided, calculate skin depth and apply lossy sheet
+                # (Make sure 'get_skin_depth' matches whatever you named your method)
+                delta = self.get_skin_depth(f0)
+
+                # AddConductingSheet enforces the SIBC loss on a 2D plane
+                mat = CSX.AddConductingSheet(
+                    self.name,
+                    conductivity=self.sigma,
+                    thickness=delta
+                )
+                print(f"[{self.name}] Applied SIBC at {f0/1e9:.2f} GHz (R_s = {1/(self.sigma * delta):.5f} Ohms/sq)")
+            else:
+                # Fallback to perfect lossless metal if no frequency is given
+                mat = CSX.AddMetal(self.name)
             return mat
 
         target_sigma = self.get_kappa_at(f0) if f0 else self.sigma
