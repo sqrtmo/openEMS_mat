@@ -1,0 +1,21 @@
+{
+    "Copper": {
+        "epsilon": 1.0,
+        "sigma": 5.8e7,
+        "color": [184, 115, 51]
+    },
+    "FR4_lossy": {
+        "epsilon": 4.4,
+        "loss_tangent": 0.02,
+        "f_ref": 1e9,
+        "color": [0, 100, 0]
+    },
+    "Water_Debye": {
+        "epsilon_inf": 4.9,
+        "sigma": 0.0,
+        "debye_poles": [
+            {"eps_s": 78.4, "tau": 9.23e-12}
+        ],
+        "color": [0, 0, 255]
+    }
+}
