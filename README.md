@@ -1,7 +1,7 @@
 # Material library for openEMS
 example:
 ```python
-from mat import Material
+from openEMS_mat.mat import Material
   
 # substrate element
 FR4 = Material.from_library( "FR4_lossy" )
